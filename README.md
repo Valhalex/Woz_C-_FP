@@ -1,6 +1,6 @@
 # Woz_C-_FP
 for our final project we created a tax calculator reading in CSV files
-This project entirely uses C#.
+This project entirely uses C#, .NET, and LINQ.
 
 # Before you run it
 
