@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-
+    using System.Linq;
 
     internal static class TaxCalculator
     {
@@ -20,7 +20,7 @@
             {
                 // declare a streamreader to read a file
                 StreamReader sr;
-                // initialize the static dictionary to a newly create empty one
+                // initialize the dictionary to a newly create empty one
                 taxRecords = new Dictionary<string, List<TaxRecord>>() { };
                 // open the taxtable.csv file into the streamreader
 
@@ -36,7 +36,7 @@
 
                         // constuct a taxrecord from the (csv) line in the file
                         TaxRecord record = new TaxRecord(myString);
-                        //call the instance using the override ToString mehtod from the TaxRecord Class
+                        //call the instance using the override ToString method from the TaxRecord Class
                         Console.WriteLine(record);
                         //if an error was found in myString, skip this line
                         if (record.stateCode == null)
@@ -59,9 +59,7 @@
                             //            create a new list of taxrecords
                             //            add the new taxrecord to the list
                             //            add the list to the dictionary under the state for the taxrecord
-                            //taxRecords.Add(record.stateCode, new List<TaxRecord>(){
-                            //    record.state, record.floor.ToString(),record.ceiling.ToString(),record.rate.ToString()
-                            //});
+                            
                             Console.WriteLine("State not found, creating new list\n" +
                                 "------------------------------------------------------------------------------------------------------------");
                             taxRecords.Add(record.stateCode, new List<TaxRecord>() { record });
@@ -80,18 +78,6 @@
             }
 
         }
-
-        // Create a static dictionary field that holds a List of Employees and is keyed by a string
-
-        
-
-        // create a static constructor that:
-
-        
-    
-
-
-
 
         // create a static method (ComputeTaxFor)  to return the computed tax given a state and income
 
@@ -260,7 +246,7 @@
         // create a Employee class representing a line from the file.  It shoudl have public properties of the correct type
         // for each of the columns in the file
 
-        public string iD;
+        public double iD;
         public string name;
         public string stateCode;
         public double hrsWorked;   
@@ -290,7 +276,7 @@
                     
                 }
 
-                this.iD = words[0];
+                this.iD = double.Parse(words[0]);
                 this.name = words[1];
                 this.stateCode = words[2];
                 this.hrsWorked = double.Parse(words[3]);
@@ -305,12 +291,11 @@
                     throw new Exception("Employees state not valid");
                 }
 
-                
             }
             catch (Exception e)
             {
                 Console.WriteLine($"{e}\n");
-                this.iD = null;
+                this.iD = double.NaN;
                 this.name = null;
                 this.stateCode = null;
                 this.hrsWorked = double.NaN;
@@ -375,7 +360,7 @@
                             Console.WriteLine($"Employee: #{record.iD} {record.name}  validated, now adding records\n" +
                                 "------------------------------------------------------------------------------------------------------------");
                             //employees[record.iD].Add(record);
-                            employees.Add(record.iD, new List<Employee>() { record });
+                            employees.Add(record.iD.ToString(), new List<Employee>() { record });
 
 
                         }
@@ -405,9 +390,10 @@
     /// 
     internal class Program
     {
-
+        
         public static void Main()
         {
+             
             bool prompt = true;
             // create an infinite loop to:
             while (prompt)
@@ -420,6 +406,7 @@
                 {
                     Console.WriteLine("Please enter the 2 character abbrieviation for your state. Try again...");
                     continue;
+                    
                 }
                 Console.WriteLine("Please Enter an income");
                 // validate the data
@@ -427,15 +414,16 @@
                 try
                 {
                     income = double.Parse(Console.ReadLine());
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
 
                     Console.WriteLine(e);
                     continue;
-                }
+                }// <----------------------------------------------------------------------------------
 
                 //prompt user for verbose or silent mode, create a public variable to hold the value
-                
+
                 Console.WriteLine("Do you wish to receive a detailed report of how your tax was calculated?(Y/N)");
                 var verbose = Console.ReadLine().ToUpper();
                 bool detailedReport;
@@ -483,7 +471,65 @@
                     }
 
                 }
-                
+                //Prompt user if they would like to sort the list of employees
+                Console.WriteLine($"If you would like to sort this list please enter one of the following choices..\n" +
+                    $"'STATE', 'INCOME', 'ID', 'NAME', 'TAX' other wise enter any key.");
+                var sort = Console.ReadLine().ToUpper();
+
+                var employees = EmployeeRecord.employees;
+                List<Employee> sortedEmps = new List<Employee>();
+
+                if (sort.Contains("STATE"))
+                {
+
+
+
+                    foreach (var list in employees.Values)
+                    {
+                        sortedEmps.AddRange(list);
+                    }
+                    sortedEmps = sortedEmps.OrderBy(x => x.stateCode).ToList();
+
+
+                }
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                else if (sort.Contains("INCOME"))
+                {
+                    foreach (var list in employees.Values)
+                    {
+                        sortedEmps.AddRange(list);
+                    }
+                    sortedEmps = sortedEmps.OrderBy(x => x.income).ToList();
+                }
+                else if (sort.Contains("ID"))
+                {
+                    foreach (var list in employees.Values)
+                    {
+                        sortedEmps.AddRange(list);
+                    }
+                    sortedEmps = sortedEmps.OrderBy(x => x.iD).ToList();
+                }
+                else if (sort.Contains("NAME"))
+                {
+                    foreach (var list in employees.Values)
+                    {
+                        sortedEmps.AddRange(list);
+                    }
+                    sortedEmps = sortedEmps.OrderBy(x => x.name).ToList();
+                }
+                else if (sort.Contains("TAX"))
+                {
+                    foreach (var list in employees.Values)
+                    {
+                        sortedEmps.AddRange(list);
+                    }
+                    sortedEmps = sortedEmps.OrderBy(x => x.taxDue).ToList();
+                }
+                foreach (Employee r in sortedEmps)
+                {   
+                        Console.WriteLine($"ID: {r.iD} Name: {r.name} State: {r.stateCode} Income:{r.income} Tax Due: {r.taxDue}"); 
+                }
+
 
                 //prompt user for another tax record
                 Console.WriteLine($"Do you want to check another tax record? (Y/N)");
