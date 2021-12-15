@@ -479,20 +479,15 @@
                 var employees = EmployeeRecord.employees;
                 List<Employee> sortedEmps = new List<Employee>();
 
+                //use linq to order our list of list
                 if (sort.Contains("STATE"))
                 {
-
-
-
                     foreach (var list in employees.Values)
                     {
                         sortedEmps.AddRange(list);
                     }
                     sortedEmps = sortedEmps.OrderBy(x => x.stateCode).ToList();
-
-
                 }
-                ///////////////////////////////////////////////////////////////////////////////////////////
                 else if (sort.Contains("INCOME"))
                 {
                     foreach (var list in employees.Values)
@@ -525,6 +520,7 @@
                     }
                     sortedEmps = sortedEmps.OrderBy(x => x.taxDue).ToList();
                 }
+                //print to console
                 foreach (Employee r in sortedEmps)
                 {   
                         Console.WriteLine($"ID: {r.iD} Name: {r.name} State: {r.stateCode} Income:{r.income} Tax Due: {r.taxDue}"); 
