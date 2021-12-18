@@ -274,6 +274,11 @@
                 bool incomeParse;
                 string userIncome = Console.ReadLine();
                 incomeParse = double.TryParse(userIncome, out double income);
+                if (!incomeParse)
+                {
+                    Console.WriteLine("You must enter a valid number..");
+                    continue;
+                }
                 //prompt user for verbose or silent mode, create a public variable to hold the value
                 Console.WriteLine("Do you wish to receive a detailed report of how your tax was calculated?(Y/N)");
                 var verbose = Console.ReadLine().ToUpper();
@@ -299,13 +304,11 @@
                 Console.WriteLine($"Now Showing list of employees, please press any key to continue..");
                 Console.ReadLine();
                 var newEmp = new EmployeeRecord();
+               
                 //Prompt user if they would like to sort the list of employees
                 Console.WriteLine($"If you would like view a sorted list of employees please enter one of the following choices..\n" +
                     $"'STATE', 'INCOME', 'ID', 'NAME', 'TAX'\n other wise enter any key.");
                 var sort = Console.ReadLine().ToUpper();
-                
-
-
                 foreach (Employee v in newEmp.SortedEmps(sort))
                 {
                     Console.WriteLine($"ID: {v.iD} Name: {v.name} State: {v.stateCode} Income:{v.income} Tax Due: {v.taxDue}");
